@@ -1,0 +1,172 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<!-- Search Bar -->
+<form method="get" class="search-form">
+    <input type="text" name="searchString" placeholder="Search flowers..." value="@Request.Query["searchString"]" class="search-input" />
+    <button type="submit" class="search-button">Search</button>
+</form>
+
+<div class="flower-container">
+    @foreach (var flower in Model.Flowers)
+    {
+        <div class="flower-card">
+            <div class="flower-image">
+                @if (flower.Images != null && flower.Images.Any())
+                {
+                    <img src="@flower.Images.First().Url" alt="@flower.Name" />
+                }
+                else
+                {
+                    <img src="https://via.placeholder.com/150" alt="No Image" />
+                }
+            </div>
+            <div class="flower-details">
+                <h3>@flower.Name</h3>
+                <p><strong>Price:</strong> $@flower.Price</p>
+                <p><strong>Address:</strong> @flower.Address</p>
+                <p>
+                    <strong>Categories:</strong> @foreach (var category in flower.Categories)
+                    {
+                        @category.Name
+                    }
+                </p>
+                <p><strong>Status:</strong> @flower.Status</p>
+                <p><strong>Stock:</strong> @flower.StockQuantity</p>
+                <p><strong>Views:</strong> @flower.Views</p>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Pagination Controls -->
+<div>
+    <nav aria-label="Page navigation" style="margin-top:20px">
+        <ul class="pagination">
+            <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
+                <a class="page-link" href="?searchString=@Model.SearchString&pageIndex=@(Model.PageIndex - 1)">Previous</a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(Model.PageIndex == i ? "active" : "")">
+                    <a class="page-link" href="?searchString=@Model.SearchString&pageIndex=@i">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.PageIndex == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="?searchString=@Model.SearchString&pageIndex=@(Model.PageIndex + 1)">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<style>
+    .search-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 0;
+    }
+
+    /* Style for the search input */
+    .search-input {
+        padding: 10px;
+        width: 300px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+        /* Change border color when input is focused */
+        .search-input:focus {
+            border-color: #007bff;
+        }
+
+    /* Style for the search button */
+    .search-button {
+        padding: 10px 15px;
+        margin-left: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        /* Change button color on hover */
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+
+    .flower-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: space-evenly;
+    }
+
+    .flower-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        width: 300px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+        .flower-card:hover {
+            transform: scale(1.05);
+        }
+
+    .flower-image img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .flower-details {
+        padding: 15px;
+    }
+
+        .flower-details h3 {
+            margin: 10px 0;
+            font-size: 1.25rem;
+            color: #333;
+        }
+
+        .flower-details p {
+            font-size: 1rem;
+            color: #555;
+            margin: 5px 0;
+        }
+
+        .flower-details strong {
+            color: #333;
+        }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        list-style: none;
+        padding: 0;
+    }
+
+    .page-item.disabled .page-link {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+
+    .page-item.active .page-link {
+        font-weight: bold;
+    }
+</style>
